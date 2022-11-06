@@ -1,87 +1,252 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Calculator_test
 {
     internal class Program
     {
-        static void Main(string[] args)
+        // Operator choices
+
+        public static int MultipleChoice(bool canCancel, params string[] options)
         {
+            const int startX = 0;
+            const int startY = 13; // Change this number to what line you want the options to start
+            const int optionsPerLine = 1;
+            const int spacingPerLine = 0;
+
+            int currentSelection = 0;
+
+            ConsoleKey key;
+
+            Console.CursorVisible = false;
+
             do
             {
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.SetCursorPosition(startX + (i % optionsPerLine) * spacingPerLine, startY + i / optionsPerLine);
+
+                    if (i == currentSelection)
+                        // ForegroundColor = Text | BackgroundColor = Background
+                        Console.ForegroundColor = ConsoleColor.DarkBlue; // Change the colour to anything you like
+
+                    Console.Write(options[i]);
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (currentSelection >= optionsPerLine)
+                                currentSelection -= optionsPerLine;
+                            break;
+                        }
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (currentSelection + optionsPerLine < options.Length)
+                                currentSelection += optionsPerLine;
+                            break;
+                        }
+                    case ConsoleKey.Enter:
+                        {
+                            currentSelection += optionsPerLine;
+                            break;
+                        }
+                }
+            } while (key != ConsoleKey.Enter);
+            Console.CursorVisible = true;
+            return currentSelection;
+        }
+
+        // Yes or No choices
+
+        public static int MultipleChoice2(bool canCancel, params string[] options)
+        {
+            const int startX = 0;
+            const int startY = 22; // Change this number to what line you want the options to start
+            const int optionsPerLine = 1;
+            const int spacingPerLine = 0;
+
+            int currentSelection = 0;
+
+            ConsoleKey key;
+
+            Console.CursorVisible = false;
+
+            do
+            {
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.SetCursorPosition(startX + (i % optionsPerLine) * spacingPerLine, startY + i / optionsPerLine);
+
+                    if (i == currentSelection)
+                        // ForegroundColor = Text | BackgroundColor = Background
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+
+                    Console.Write(options[i]);
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true).Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (currentSelection >= optionsPerLine)
+                                currentSelection -= optionsPerLine;
+                            break;
+                        }
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (currentSelection + optionsPerLine < options.Length)
+                                currentSelection += optionsPerLine;
+                            break;
+                        }
+                    case ConsoleKey.Enter:
+                        {
+                            currentSelection += optionsPerLine;
+                            break;
+                        }
+                }
+            } while (key != ConsoleKey.Enter);
+            Console.CursorVisible = true;
+            return currentSelection;
+        }
+
+        // Operations
+
+        public static void Operators(double num1, double num2, double result, int selectedClass)
+        {
+            switch (selectedClass)
+            {
+                case 1:
+                    result = num1 + num2;
+                    Console.WriteLine($"\nYour result\n {num1} + {num2} = {result}\n");
+                    return;
+
+                case 2:
+                    result = num1 - num2;
+                    Console.WriteLine($"\nYour result:\n {num1} - {num2} = {result}\n");
+                    break;
+
+                case 3:
+                    result = num1 * num2;
+                    Console.WriteLine($"\nYour result:\n {num1} * {num2} = {result}\n");
+                    return;
+
+                case 4:
+                    if (num2 == 0)
+                    {
+                        Console.WriteLine("\nYou cannot divide by zero!");
+                        return;
+                    }
+                    result = num1 / num2;
+                    Console.WriteLine($"\nYour result:\n {num1} / {num2} = {result}\n");
+                    return;
+                default:
+                    Console.WriteLine("\nThat was not a valid option\n");
+                    return;
+
+            }
+            return;
+        }
+
+        static void Ending(double x, int endClass)
+        {
+            switch (endClass)
+            {
+                case 1:
+                    // Reset program
+                    x = 6;
+                    return;
+                case 2:
+                    // Exit program
+                    Console.WriteLine("Bye!\n");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Exiting the program in 5");
+                    for (int i = 5; i >= 0; --i)
+                    {
+                        Console.Write("\b");
+                        Console.Write($"{i}");
+                        Thread.Sleep(1000);
+                    }
+                    Environment.Exit(0);
+                    return;
+            }
+            return;
+        }
+
+
+
+        static void Main(string[] args)
+        {
+            double x = 5;
+            do
+            {
+                Console.Clear();
                 double num1 = 0;
                 double num2 = 0;
                 double result = 0;
-                string myText = "Calculator Program\n";
-                string myText2 = "------------------\n";
+                string myText = " _____       _            _       _             \r\n/  __ \\     | |          | |     | |            \r\n| /  \\/ __ _| | ___ _   _| | __ _| |_ ___  _ __ \r\n| |    / _` | |/ __| | | | |/ _` | __/ _ \\| '__|\r\n| \\__/\\ (_| | | (__| |_| | | (_| | || (_) | |   \r\n \\____/\\__,_|_|\\___|\\__,_|_|\\__,_|\\__\\___/|_|   \r\n  \n";
 
+                Console.ForegroundColor = ConsoleColor.Cyan;
 
-                for(int i =0; i < myText2.Length; i++) // -----------
-                {
-                    Console.Write(myText2[i]);
-                    System.Threading.
-                        Thread.Sleep(50);
-                }
+                // Title with type writer effect
 
-                for (int i = 0; i < myText.Length; i++) // Calculator Program
+                for (int i = 0; i < myText.Length; i++)
                 {
                     Console.Write(myText[i]);
                     System.Threading.
-                        Thread.Sleep(50);
+                        Thread.Sleep(1);
                 }
-                for (int i = 0; i < myText2.Length; i++) // -----------
-                {
-                    Console.Write(myText2[i]);
-                    System.Threading.
-                        Thread.Sleep(50);
-                }
+
+                Console.ResetColor();
+
+                // Check for first number
 
                 Console.WriteLine("Enter number 1: ");
                 num1 = Convert.ToDouble(Console.ReadLine());
 
+                // Check for second number
+
                 Console.WriteLine("Enter number 2: ");
                 num2 = Convert.ToDouble(Console.ReadLine());
 
-                Console.WriteLine("Enter an option: ");
-                Console.WriteLine("\t+ : Add");
-                Console.WriteLine("\t- : Subtract");
-                Console.WriteLine("\t* : Multiply");
-                Console.WriteLine("\t/ : Divide");
-                Console.Write("Enter an option: ");
+                // Present operator choices
 
-                switch (Console.ReadLine())
-                {
-                    case "+":
-                        result = num1 + num2;
-                        Console.WriteLine($"Your result: {num1} + {num2} = " + result);
-                        break;
-                    case "-":
-                        result = num1 - num2;
-                        Console.WriteLine($"Your result: {num1} - {num2} = " + result);
-                        break;
-                    case "*":
-                        result = num1 * num2;
-                        Console.WriteLine($"Your result: {num1} * {num2} = " + result);
-                        break;
-                    case "/":
-                        result = num1 / num2;
-                        Console.WriteLine($"Your result: {num1} / {num2} = " + result);
-                        break;
-                    default:
-                        Console.WriteLine("That was not a valid option");
-                        break;
-                }
-                Console.Write("Would you like to continue? (Y= Yes, N = No): ");
-            } while (Console.ReadLine().ToUpper() == "Y");
+                Console.WriteLine("\nUse the arrow keys to cycle through options and press enter to select an option");
+                int selectedClass = MultipleChoice(true, "\t+ : Add", "\t- : Subtract", "\t* : Multiply", "\t/ : Divide\n"); // Change this to whatever you want
+
+                // Output
+
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                Operators(num1, num2, result, selectedClass);
 
 
+                Console.ResetColor();
 
-            Console.WriteLine("Bye!");
+                // Present user if they'd like to do another calculation
+                Console.WriteLine("Would you like to continue?");
+
+                int endClass = MultipleChoice2(true, "\tYes", "\tNo\n");
+                Ending(x, endClass);
+                x = 6;
+            } while (x == 6);
+
             Console.ReadKey();
 
         }
+
     }
 }
